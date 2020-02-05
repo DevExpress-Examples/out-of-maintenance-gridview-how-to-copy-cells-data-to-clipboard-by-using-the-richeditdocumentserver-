@@ -129,8 +129,7 @@ namespace Q577904 {
             GridCellInfo gridCellInfo = viewInfo.GetGridCellInfo(cell.RowHandle, cell.Column);
             gridCellInfo.State &= ~(GridRowCellState.Focused | GridRowCellState.FocusedCell | GridRowCellState.Selected);
             System.Reflection.MethodInfo method = viewInfo.GetType().GetMethod("UpdateCellAppearanceCore", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
-            method.Invoke(viewInfo, new object[] { gridCellInfo
-            });
+            method.Invoke(viewInfo, new object[] { gridCellInfo, true, true, null });
             return gridCellInfo;
         }
     }
