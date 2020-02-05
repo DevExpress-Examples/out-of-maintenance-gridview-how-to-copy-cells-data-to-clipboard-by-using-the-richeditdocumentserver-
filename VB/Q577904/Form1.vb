@@ -80,7 +80,7 @@ Namespace Q577904
         End Sub
 
         Private Sub SetBorders(ByVal table As Table)
-            Dim thickness As Single = 1.0F
+            Dim thickness As Single = 1F
             table.Borders.InsideVerticalBorder.LineColor = gridView1.PaintAppearance.VertLine.BackColor
             table.Borders.Right.LineColor = table.Borders.InsideVerticalBorder.LineColor
             table.Borders.Left.LineColor = table.Borders.Right.LineColor
@@ -103,8 +103,14 @@ Namespace Q577904
 
         Private Sub CopyToClipboard()
             Dim cells() As GridCell = gridView1.GetSelectedCells()
-            Dim rows = cells.GroupBy(Function(c) c.RowHandle).Select(Function(gr) gr).OrderBy(Function(gr) gr.Key)
-            Dim columns = cells.GroupBy(Function(c) c.Column).Select(Function(gr) gr).OrderBy(Function(gr) gr.Key.VisibleIndex)
+            Dim rows = From c In cells _
+                       Group c By c.RowHandle Into gr = Group _
+                       Order By RowHandle _
+                       Select gr
+            Dim columns = From c In cells _
+                          Group c By c.Column Into gr = Group _
+                          Order By Column.VisibleIndex _
+                          Select gr
             Dim srv As New RichEditDocumentServer()
             srv.CreateNewDocument()
             Dim table As Table = srv.Document.InsertTable(srv.Document.CaretPosition, rows.Count() + 1, columns.Count())
@@ -131,9 +137,9 @@ Namespace Q577904
 
         Private Function GetGridCellInfo(ByVal viewInfo As GridViewInfo, ByVal cell As GridCell) As GridCellInfo
             Dim gridCellInfo As GridCellInfo = viewInfo.GetGridCellInfo(cell.RowHandle, cell.Column)
-            gridCellInfo.State = gridCellInfo.State And Not (GridRowCellState.Focused Or GridRowCellState.FocusedCell Or GridRowCellState.Selected)
+            gridCellInfo.State = gridCellInfo.State And Not(GridRowCellState.Focused Or GridRowCellState.FocusedCell Or GridRowCellState.Selected)
             Dim method As System.Reflection.MethodInfo = viewInfo.GetType().GetMethod("UpdateCellAppearanceCore", System.Reflection.BindingFlags.Instance Or System.Reflection.BindingFlags.NonPublic)
-            method.Invoke(viewInfo, New Object() {gridCellInfo, True, True, Nothing})
+            method.Invoke(viewInfo, New Object() { gridCellInfo })
             Return gridCellInfo
         End Function
     End Class
