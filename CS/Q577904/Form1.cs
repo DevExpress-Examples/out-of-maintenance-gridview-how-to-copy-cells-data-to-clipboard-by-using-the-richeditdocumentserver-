@@ -102,8 +102,8 @@ namespace Q577904 {
                           orderby gr.Key.VisibleIndex
                           select gr;
             RichEditDocumentServer srv = new RichEditDocumentServer();
-            srv.CreateNewDocument();
-            Table table = srv.Document.InsertTable(srv.Document.CaretPosition, rows.Count() + 1, columns.Count());
+            srv.CreateNewDocument();                       
+            Table table = srv.Document.Tables.Create(srv.Document.CaretPosition, rows.Count() + 1, columns.Count());
             SetBorders(table);
             CopyColumns(columns, srv, table);
             CopyCells(rows, srv, table);
